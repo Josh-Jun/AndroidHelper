@@ -12,6 +12,6 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-rootProject.name = "UnityApp"
+rootProject.name = "AndroidHelper"
 include ':app'
 include ':AndroidResHelper'

@@ -13,6 +13,8 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Environment;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.provider.MediaStore;
 import android.telephony.PhoneStateListener;
 import android.telephony.SignalStrength;
@@ -175,7 +177,15 @@ public class AndroidHelper extends UnityPlayerActivity {
         }
         return mSignalLevel;
     }
-
+    //震动效果
+    //这里的mpattern数组 mpattern[0] 是延迟震动时间，mpattern[1]是震动的频率，mpattern[2]是暂停时间，mpattern[3]是震动的频率 依此类推
+    //index：震动的类型
+    //index = -1 只震动一次
+    //index = 0 一直震动
+    public static void vibrate(long[] mpattern, int index) {
+        Vibrator vibrator = (Vibrator)mContext.getSystemService(Context.VIBRATOR_SERVICE);
+        vibrator.vibrate(VibrationEffect.createWaveform(mpattern, index));
+    }
     //Toast弹窗
     public static void showTips(final String str) {
         if (mToast != null) {

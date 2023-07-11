@@ -57,6 +57,15 @@ public class AndroidHelper extends UnityPlayerActivity {
         return mainActivity.getIntent().getStringExtra(key);
     }
 
+    //打开应用设置
+    public static void openAppSetting(){
+        Uri uri = Uri.fromParts("package", mContext.getPackageName(), (String)null);
+        Intent intent = new Intent();
+        intent.setAction("android.settings.APPLICATION_DETAILS_SETTINGS");
+        intent.setData(uri);
+        mContext.startActivity(intent);
+    }
+
     // 退出UnityActivity
     public static void quitUnityActivity() { mainActivity.finish(); }
 

@@ -24,18 +24,17 @@ import android.widget.Toast;
 
 import androidx.core.content.FileProvider;
 
-import com.unity3d.player.UnityPlayer;
-import com.unity3d.player.UnityPlayerActivity;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.List;
 
-public class AndroidHelper extends UnityPlayerActivity {
+public class AndroidHelper {
     private static Context mContext = null;
-    private static Activity mainActivity = null;
+    private static Activity UnityActivity = null;
 
     private static int mSignalLevel = 0;
     private static Toast mToast;
@@ -47,14 +46,14 @@ public class AndroidHelper extends UnityPlayerActivity {
         if (mContext == null) {
             mContext = context;
         }
-        if (mainActivity == null) {
-            mainActivity = (Activity) context;
+        if (UnityActivity == null) {
+            UnityActivity = (Activity) context;
         }
     }
 
     // 获取App发过来的消息
     public static String getAppData(String key) {
-        return mainActivity.getIntent().getStringExtra(key);
+        return UnityActivity.getIntent().getStringExtra(key);
     }
 
     //打开应用设置
@@ -67,11 +66,11 @@ public class AndroidHelper extends UnityPlayerActivity {
     }
 
     // 退出UnityActivity
-    public static void quitUnityActivity() { mainActivity.finish(); }
+    public static void quitUnityActivity() { UnityActivity.finish(); }
 
     // 保存图片到相册
     public static void savePhoto(String imagePath) {
-        mainActivity.runOnUiThread(new Runnable() {
+        UnityActivity.runOnUiThread(new Runnable() {
             public void run() {
                 Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
                 // 首先保存图片
@@ -193,7 +192,9 @@ public class AndroidHelper extends UnityPlayerActivity {
     //index = 0 一直震动
     public static void vibrate(long[] mpattern, int index) {
         Vibrator vibrator = (Vibrator)mContext.getSystemService(Context.VIBRATOR_SERVICE);
-        vibrator.vibrate(VibrationEffect.createWaveform(mpattern, index));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            vibrator.vibrate(VibrationEffect.createWaveform(mpattern, index));
+        }
     }
     //Toast弹窗
     public static void showTips(final String str) {
@@ -206,6 +207,16 @@ public class AndroidHelper extends UnityPlayerActivity {
 
     //发送消息给Unity
     private static void SendMsg(String methodName, String parameter) {
-        UnityPlayer.UnitySendMessage(GoName, methodName, parameter);
+        try {
+            Class<?> unity = UnityActivity.getClass();
+            Method method = unity.getMethod("UnitySendMessage", String.class, String.class, String.class);
+            method.invoke(unity, GoName, methodName, parameter);
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        } catch (InvocationTargetException e) {
+            throw new RuntimeException(e);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

@@ -25,7 +25,7 @@ android {
 android.libraryVariants.all { variant ->
     variant.outputs.all {
         if (outputFileName.endsWith('.aar')) {
-            outputFileName = "${project.name}.aar"   // 例："${project.name}-${variant.name}.aar"
+            outputFileName = "${variant.name}/${project.name}.aar"   // 例："${project.name}-${variant.name}.aar"
         }
     }
 }

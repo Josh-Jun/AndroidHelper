@@ -39,7 +39,7 @@ public class AndroidHelper {
     private static int mSignalLevel = 0;
     private static Toast mToast;
 
-    private static String GoName = "PlatformMsgReceiver";
+    private static String GoName = "Master";
 
     // 初始化
     public static void init(Context context) {

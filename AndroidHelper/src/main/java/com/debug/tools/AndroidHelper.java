@@ -206,7 +206,7 @@ public class AndroidHelper {
     }
 
     //发送消息给Unity
-    private static void SendMsg(String methodName, String parameter) {
+    public static void UnitySendMsg(String methodName, String parameter) {
         try {
             Class<?> unity = UnityActivity.getClass();
             Method method = unity.getMethod("UnitySendMessage", String.class, String.class, String.class);

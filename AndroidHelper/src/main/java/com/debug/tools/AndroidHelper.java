@@ -206,7 +206,7 @@ public class AndroidHelper {
     }
 
     //发送消息给Unity
-    public static void UnitySendMsg(String methodName, String parameter) {
+    public static void sengUnityMsg(String methodName, String parameter) {
         try {
             Class<?> unity = UnityActivity.getClass();
             Method method = unity.getMethod("UnitySendMessage", String.class, String.class, String.class);
@@ -218,5 +218,9 @@ public class AndroidHelper {
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
+    }
+    // 接收Unity消息
+    public static void receiveUnityMsg(String msg) {
+
     }
 }

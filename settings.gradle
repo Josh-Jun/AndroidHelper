@@ -18,6 +18,10 @@ dependencyResolutionManagement {
         mavenCentral()
         // JitPack 远程仓库
         maven { url 'https://jitpack.io' }
+        // huawei 远程仓库
+        maven { url 'https://developer.huawei.com/repo/' }
+        // hihonor 远程仓库
+        maven { url 'https://developer.hihonor.com/repo/' }
     }
 }
 

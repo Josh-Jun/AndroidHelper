@@ -24,6 +24,8 @@ import android.widget.Toast;
 
 import androidx.core.content.FileProvider;
 
+import com.github.gzuliyujiang.oaid.DeviceIdentifier;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -54,6 +56,10 @@ public class AndroidHelper {
     // 获取App发过来的消息
     public static String getAppData(String key) {
         return UnityActivity.getIntent().getStringExtra(key);
+    }
+
+    public static String getOAID(){
+        return DeviceIdentifier.getOAID(mContext);
     }
 
     //打开应用设置

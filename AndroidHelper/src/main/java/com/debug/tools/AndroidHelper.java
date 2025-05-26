@@ -74,53 +74,6 @@ public class AndroidHelper {
     // 退出UnityActivity
     public static void quitUnityActivity() { UnityActivity.finish(); }
 
-    // 保存图片到相册
-    public static void savePhoto(String imagePath) {
-        UnityActivity.runOnUiThread(new Runnable() {
-            public void run() {
-                Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
-                // 首先保存图片
-                File file = new File(imagePath);
-                try {
-                    FileOutputStream fos = new FileOutputStream(file);
-                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
-                    fos.flush();
-                    fos.close();
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                bitmap.recycle();//扫描保存的图片
-                // 其次把文件插入到系统图库
-                try {
-                    Log.i("Unity", file.getAbsolutePath());
-                    MediaStore.Images.Media.insertImage(mContext.getContentResolver(),
-                            file.getAbsolutePath(), file.getName(), null);
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
-                // 最后通知图库更新
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) { // 判断SDK版本是否是4.4或者高于4.4
-                    String[] paths = new String[]{file.getAbsolutePath()};
-                    MediaScannerConnection.scanFile(mContext, paths, null, null);
-                } else {
-                    final Intent intent;
-                    if (file.isDirectory()) {
-                        intent = new Intent(Intent.ACTION_MEDIA_MOUNTED);
-                        intent.setClassName("com.android.providers.media", "com.android.providers.media.MediaScannerReceiver");
-                        intent.setData(Uri.fromFile(Environment.getExternalStorageDirectory()));
-                    } else {
-                        intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-                        intent.setData(Uri.fromFile(file));
-                    }
-                    mContext.sendBroadcast(intent);
-                }
-                Toast.makeText(mContext, "截图已保存到相册", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
     // 安装apk
     public static void installApp(String appFullPath) {
         try {

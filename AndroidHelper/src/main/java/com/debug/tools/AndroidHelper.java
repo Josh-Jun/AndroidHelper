@@ -5,31 +5,20 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
-import android.os.Environment;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
-import android.provider.MediaStore;
 import android.telephony.PhoneStateListener;
 import android.telephony.SignalStrength;
 import android.telephony.TelephonyManager;
-import android.util.Log;
 import android.widget.Toast;
 
 import androidx.core.content.FileProvider;
 
-import com.github.gzuliyujiang.oaid.DeviceIdentifier;
-
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
@@ -56,10 +45,6 @@ public class AndroidHelper {
     // 获取App发过来的消息
     public static String getAppData(String key) {
         return UnityActivity.getIntent().getStringExtra(key);
-    }
-
-    public static String getOAID(){
-        return DeviceIdentifier.getOAID(mContext);
     }
 
     //打开应用设置

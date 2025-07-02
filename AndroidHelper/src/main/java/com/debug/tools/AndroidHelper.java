@@ -1,5 +1,7 @@
 package com.debug.tools;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -16,6 +18,7 @@ import android.telephony.SignalStrength;
 import android.telephony.TelephonyManager;
 import android.widget.Toast;
 
+import androidx.annotation.RequiresPermission;
 import androidx.core.content.FileProvider;
 
 import java.io.File;
@@ -24,13 +27,17 @@ import java.lang.reflect.Method;
 import java.util.List;
 
 public class AndroidHelper {
+    @SuppressLint("StaticFieldLeak")
     private static Context mContext = null;
+    @SuppressLint("StaticFieldLeak")
     private static Activity UnityActivity = null;
 
     private static int mSignalLevel = 0;
     private static Toast mToast;
 
-    private static String GoName = "Master";
+    public static UnityMsgHolder holder = new UnityMsgHolder();
+
+    private static final String GoName = "Master";
 
     // 初始化
     public static void init(Context context) {
@@ -90,8 +97,8 @@ public class AndroidHelper {
     }
 
     /*获取wifi信号强度
-      wifiinfo.getRssi()；获取RSSI，RSSI就是接受信号强度指示。
-      这里得到信号强度就靠wifiinfo.getRssi()这个方法。
+      wifi-info.getRssi()；获取RSSI，RSSI就是接受信号强度指示。
+      这里得到信号强度就靠wifi-info.getRssi()这个方法。
       得到的值是一个0到-100的区间值，是一个int型数据，其中0到-50表示信号最好，
       -50到-70表示信号偏差，小于-70表示最差，
       有可能连接不上或者掉线，一般Wifi已断则值为-200。*/
@@ -99,7 +106,7 @@ public class AndroidHelper {
         // Wifi的连接速度及信号强度：
         int level = 0;
         int strength = 0;
-        WifiManager wifiManager = (WifiManager) mContext.getSystemService(Context.WIFI_SERVICE);
+        WifiManager wifiManager = (WifiManager) mContext.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         WifiInfo info = wifiManager.getConnectionInfo();
         if (info.getBSSID() != null) {
             // 链接信号强度
@@ -130,14 +137,15 @@ public class AndroidHelper {
         return mSignalLevel;
     }
     //震动效果
-    //这里的mpattern数组 mpattern[0] 是延迟震动时间，mpattern[1]是震动的频率，mpattern[2]是暂停时间，mpattern[3]是震动的频率 依此类推
+    //这里的pattern数组 pattern[0] 是延迟震动时间，pattern[1]是震动的频率，pattern[2]是暂停时间，pattern[3]是震动的频率 依此类推
     //index：震动的类型
     //index = -1 只震动一次
     //index = 0 一直震动
-    public static void vibrate(long[] mpattern, int index) {
+    @RequiresPermission(Manifest.permission.VIBRATE)
+    public static void vibrate(long[] pattern, int index) {
         Vibrator vibrator = (Vibrator)mContext.getSystemService(Context.VIBRATOR_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            vibrator.vibrate(VibrationEffect.createWaveform(mpattern, index));
+            vibrator.vibrate(VibrationEffect.createWaveform(pattern, index));
         }
     }
     //Toast弹窗
@@ -155,16 +163,13 @@ public class AndroidHelper {
             Class<?> unity = UnityActivity.getClass();
             Method method = unity.getMethod("UnitySendMessage", String.class, String.class, String.class);
             method.invoke(unity, GoName, methodName, parameter);
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException(e);
-        } catch (InvocationTargetException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
     }
+
     // 接收Unity消息
     public static void receiveUnityMsg(String msg) {
-
+        holder.execute(msg);
     }
 }

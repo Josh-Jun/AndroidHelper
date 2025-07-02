@@ -4,7 +4,7 @@ plugins {
 
 android {
     namespace 'com.debug.tools'
-    compileSdk 34
+    compileSdk 35
 
     defaultConfig {
         minSdk 23
@@ -23,7 +23,7 @@ android {
     }
     buildToolsVersion '34.0.0'
 }
-android.libraryVariants.all { variant ->
+android.libraryVariants.configureEach { variant ->
     variant.outputs.all {
         if (outputFileName.endsWith('.aar')) {
             outputFileName = "${variant.name}/${project.name}.aar"   // 例："${project.name}-${variant.name}.aar"

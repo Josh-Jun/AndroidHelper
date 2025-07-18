@@ -1,17 +1,21 @@
 [versions]
 agp = "8.3.2"
+appcompatVersion = "1.7.1"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 appcompat = "1.6.1"
 material = "1.10.0"
+supportV4 = "28.0.0"
 
 [libraries]
+appcompat-v171 = { module = "androidx.appcompat:appcompat", version.ref = "appcompatVersion" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 appcompat = { group = "androidx.appcompat", name = "appcompat", version = "1.7.0" }
 material = { group = "com.google.android.material", name = "material", version = "1.12.0" }
+support-v4 = { module = "com.android.support:support-v4", version.ref = "supportV4" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

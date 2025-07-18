@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
@@ -16,6 +17,8 @@ import android.os.Vibrator;
 import android.telephony.PhoneStateListener;
 import android.telephony.SignalStrength;
 import android.telephony.TelephonyManager;
+import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.Toast;
 
 import androidx.annotation.RequiresPermission;
@@ -38,6 +41,8 @@ public class AndroidHelper {
     public static UnityMsgHolder holder = new UnityMsgHolder();
 
     private static final String GoName = "Master";
+    private static final String MethodName = "ReceiveNativeMsg";
+    public static int keyboardHeight = 0;
 
     // 初始化
     public static void init(Context context) {
@@ -47,6 +52,34 @@ public class AndroidHelper {
         if (UnityActivity == null) {
             UnityActivity = (Activity) context;
         }
+        addKeyBoardHeightListener();
+    }
+    public static void addKeyBoardHeightListener() {
+        if (keyboardHeight > 0) {
+            return;
+        }
+        try {
+            Class<?> unity = Class.forName("com.unity3d.player.UnityPlayer");
+            Activity activity = (Activity) unity.getField("currentActivity").get(null);
+            assert activity != null;
+            View decorView = activity.getWindow().getDecorView();
+            ViewTreeObserver.OnGlobalLayoutListener listener = () -> {
+                Rect rect = new Rect();
+                decorView.getWindowVisibleDisplayFrame(rect);
+                int height = decorView.getHeight() - rect.bottom;
+                if(height > 0){
+                    keyboardHeight = height;
+                }
+                sendUnityMsg("{\"Name\":\"NativeSetKeyboardHeight\",\"Data\":\""+height+"\"}");
+            };
+            decorView.getViewTreeObserver().addOnGlobalLayoutListener(listener);
+        } catch (ClassNotFoundException | IllegalAccessException | NoSuchFieldException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static int getKeyboardHeight(){
+        return keyboardHeight;
     }
 
     // 获取App发过来的消息
@@ -158,12 +191,12 @@ public class AndroidHelper {
     }
 
     //发送消息给Unity
-    public static void sengUnityMsg(String methodName, String parameter) {
+    public static void sendUnityMsg(String parameter) {
         try {
-            Class<?> unity = UnityActivity.getClass();
+            Class<?> unity = Class.forName("com.unity3d.player.UnityPlayer");
             Method method = unity.getMethod("UnitySendMessage", String.class, String.class, String.class);
-            method.invoke(unity, GoName, methodName, parameter);
-        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+            method.invoke(unity, GoName, MethodName, parameter);
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
     }

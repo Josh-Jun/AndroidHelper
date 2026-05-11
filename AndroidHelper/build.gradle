@@ -34,4 +34,6 @@ android.libraryVariants.configureEach { variant ->
 dependencies {
     implementation libs.appcompat.v171
     implementation libs.support.v4
+    compileOnly(libs.wechat.sdk.android)
+    compileOnly(libs.alipaysdk.android)
 }

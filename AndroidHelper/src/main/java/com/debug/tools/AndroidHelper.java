@@ -21,8 +21,10 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.Toast;
 
-import androidx.annotation.RequiresPermission;
 import androidx.core.content.FileProvider;
+
+import com.debug.tools.alipay.AliPay;
+import com.debug.tools.wechat.WeChat;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
@@ -70,7 +72,7 @@ public class AndroidHelper {
                 if(height > 0){
                     keyboardHeight = height;
                 }
-                sendUnityMsg("{\"Name\":\"NativeSetKeyboardHeight\",\"Data\":\""+height+"\"}");
+                sendUnityMsg("{\"Name\":\"NativeSetKeyboardHeight\",\"Data\":\"" + height + "\"}");
             };
             decorView.getViewTreeObserver().addOnGlobalLayoutListener(listener);
         } catch (ClassNotFoundException | IllegalAccessException | NoSuchFieldException e) {
@@ -174,7 +176,7 @@ public class AndroidHelper {
     //index：震动的类型
     //index = -1 只震动一次
     //index = 0 一直震动
-    @RequiresPermission(Manifest.permission.VIBRATE)
+    @androidx.annotation.RequiresPermission(Manifest.permission.VIBRATE)
     public static void vibrate(long[] pattern, int index) {
         Vibrator vibrator = (Vibrator)mContext.getSystemService(Context.VIBRATOR_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -188,6 +190,42 @@ public class AndroidHelper {
         }
         mToast = Toast.makeText(mContext, str, Toast.LENGTH_SHORT);
         mToast.show();
+    }
+
+    public static void initWeChatSDK(String appId){
+        WeChat.init(UnityActivity, appId);
+    }
+
+    public static boolean WeChatAuth(){
+        return WeChat.Auth();
+    }
+
+    public static void WeChatPay(final String partnerID, final String prepayID, final String nonceStr, final String timeStamp, final String sign){
+        WeChat.Pay(partnerID, prepayID, nonceStr, timeStamp, sign);
+    }
+
+    public static void WeChatShareText(String text, int scene){
+        WeChat.ShareText(text, scene);
+    }
+
+    public static void WeChatShareImage(byte[] imageDate, byte[] thumbImageDate, int scene){
+        WeChat.ShareImage(imageDate, thumbImageDate, scene);
+    }
+
+    public static void WeChatShareWeb(String url, String title, String description, byte[] thumbImageData, int scene){
+        WeChat.ShareWeb(url, title, description, thumbImageData, scene);
+    }
+
+    public static void initAlipaySDK(String appId){
+        AliPay.init(UnityActivity, appId);
+    }
+
+    public static void AlipayAuth(String authInfo){
+        AliPay.Auth(authInfo);
+    }
+
+    public static void AlipayPay(String orderInfo){
+        AliPay.Pay(orderInfo);
     }
 
     //发送消息给Unity
